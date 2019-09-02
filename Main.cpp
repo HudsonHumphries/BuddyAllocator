@@ -1,5 +1,7 @@
 #include "Ackerman.h"
 #include "BuddyAllocator.h"
+#include <stdio.h>
+#include <unistd.h>
 
 void easytest(BuddyAllocator* ba){
   // be creative here
@@ -19,7 +21,18 @@ void easytest(BuddyAllocator* ba){
 
 int main(int argc, char ** argv) {
 
-  int basic_block_size = 128, memory_length = 128 * 1024 * 1024;
+  int basic_block_size = 128, memory_length = 512 * 1024; //512bytes * 1024 (2^10) gives a base size of 512 kB
+
+  //Getting basic block size and memorylength from command line, defaults set above
+  int cmd;
+  while((cmd = getopt(argc, argv, "b:s:")) != -1) {
+    switch(cmd) {
+      case 'b':
+        basic_block_size = cmd;
+      case 's':
+        memory_length = cmd;
+    } 
+  }
 
   // create memory manager
   BuddyAllocator * allocator = new BuddyAllocator(basic_block_size, memory_length);
