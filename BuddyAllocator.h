@@ -18,12 +18,63 @@ class LinkedList{
 	// this is a special linked list that is made out of BlockHeader s. 
 public:
 	BlockHeader* head;		// you need a head of the list
+	int size;
 public:
+	LinkedList() {
+		size = 0;
+		head = nullptr;
+	}
 	void insert (BlockHeader* b){	// adds a block to the list
-
+		if(head == nullptr) {
+			head = b;
+			head->next = nullptr;
+		}
+		else {
+			BlockHeader* temp = head;
+			b->next = temp;
+			head = b;
+		}
+		size++;
 	}
 
-	void remove (BlockHeader* b){  // removes a block from the list
+	void remove (BlockHeader* b){  // removes a block from the list	
+
+		if(head == b) {
+			if(head->next) {
+				head = head->next;
+			}
+			else {
+				head = nullptr;
+			}
+		}
+		else {
+			BlockHeader* node = head;
+			BlockHeader* temp = head;
+
+			while(node != nullptr) {
+				node = node->next;
+				//If node is b, then we want to set the block behind it, to the next available block or temp if there is no block
+				if(node == b) {
+					if(node->next) {
+						temp->next = node->next;
+					}
+					else {
+						temp->next = nullptr;
+					}
+					break;
+				}
+				//If this isn't the node, update temp to move forward, stay in the loop
+				temp = node;
+			}
+			//If we got to the end of the list, never hitting the if in the middle, we did not remove the node. So don't lower the size
+			if(node == nullptr) {
+				cout << "Node was not found in the list" << endl;
+			}
+			else {
+				size--;
+			}
+		}
+
 
 	}
 };
