@@ -83,6 +83,7 @@ public:
 class BuddyAllocator{
 private:
 	/* declare more member variables as necessary */
+	char* start;
 	vector<LinkedList> FreeList;
 	int basic_block_size;
 	int total_memory_size;

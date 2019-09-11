@@ -46,5 +46,6 @@ int main(int argc, char ** argv) {
   am->test(allocator); // this is the full-fledged test. 
   
   // destroy memory manager
+  delete am;
   delete allocator;
 }

@@ -3,11 +3,11 @@
 using namespace std;
 
 BuddyAllocator::BuddyAllocator (int _basic_block_size, int _total_memory_length){
-	
+	start = new char[_total_memory_length];
 }
 
 BuddyAllocator::~BuddyAllocator (){
-	
+	delete start;
 }
 
 char* BuddyAllocator::alloc(int _length) {
