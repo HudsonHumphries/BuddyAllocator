@@ -18,10 +18,8 @@ class LinkedList{
 	// this is a special linked list that is made out of BlockHeader s. 
 public:
 	BlockHeader* head;		// you need a head of the list
-	int size;
 public:
 	LinkedList() {
-		size = 0;
 		head = nullptr;
 	}
 	void insert (BlockHeader* b){	// adds a block to the list
@@ -34,7 +32,6 @@ public:
 			b->next = temp;
 			head = b;
 		}
-		size++;
 	}
 
 	void remove (BlockHeader* b){  // removes a block from the list	
@@ -70,12 +67,7 @@ public:
 			if(node == nullptr) {
 				cout << "Node was not found in the list" << endl;
 			}
-			else {
-				size--;
-			}
 		}
-
-
 	}
 };
 
