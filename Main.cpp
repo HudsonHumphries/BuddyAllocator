@@ -28,9 +28,9 @@ int main(int argc, char ** argv) {
   while((cmd = getopt(argc, argv, "b:s:")) != -1) {
     switch(cmd) {
       case 'b':
-        basic_block_size = cmd;
+        basic_block_size = atoi(optarg);
       case 's':
-        memory_length = cmd;
+        memory_length = atoi(optarg);
     } 
   }
 
@@ -44,7 +44,6 @@ int main(int argc, char ** argv) {
   // stress-test the memory manager, do this only after you are done with small test cases
   Ackerman* am = new Ackerman ();
   am->test(allocator); // this is the full-fledged test. 
-  
   // destroy memory manager
   delete am;
   delete allocator;

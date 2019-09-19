@@ -12,6 +12,7 @@ public:
 	// think about what else should be included as member variables
 	int block_size;  // size of the block
 	BlockHeader* next; // pointer to the next block
+	bool free;
 };
 
 class LinkedList{
@@ -83,6 +84,8 @@ private:
 private:
 	/* private function you are required to implement
 	 this will allow you and us to do unit test */
+
+	int findindex(int length);
 	
 	BlockHeader* getbuddy (BlockHeader * addr); 
 	// given a block address, this function returns the address of its buddy 
