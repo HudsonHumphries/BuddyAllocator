@@ -21,7 +21,7 @@ void easytest(BuddyAllocator* ba){
 
 int main(int argc, char ** argv) {
 
-  int basic_block_size = 128, memory_length = 512 * 1024; //512bytes * 1024 (2^10) gives a base size of 512 kB
+  int basic_block_size = 128, memory_length = 512 * 1024 * 1024; //512bytes * 1024 (2^10) gives a base size of 512 kB
 
   //Getting basic block size and memorylength from command line, defaults set above
   int cmd;

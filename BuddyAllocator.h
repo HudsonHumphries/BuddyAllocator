@@ -66,7 +66,7 @@ public:
 			}
 			//If we got to the end of the list, never hitting the if in the middle, we did not remove the node. So don't lower the size
 			if(node == nullptr) {
-				cout << "Node was not found in the list" << endl;
+				//cout << "Node was not found in the list" << endl;
 			}
 		}
 	}
