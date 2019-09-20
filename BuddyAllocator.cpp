@@ -32,7 +32,8 @@ char* BuddyAllocator::alloc(int _length) {
   if(FreeList[index].head) {
     BlockHeader* b = FreeList[index].head;
     FreeList[index].remove(b);
-    return (char *) (b)+1;
+    b->free = false;
+    return (char *) (b)+sizeof(BlockHeader);
   }
   else {
     //we need to go through and split until we can get a block of that size.
@@ -54,34 +55,46 @@ char* BuddyAllocator::alloc(int _length) {
       j--;
     }
     BlockHeader* final = FreeList[index].head;
+    final->free = false;
     FreeList[index].remove(final);
 
-    return (char*) (final)+1;
+    return (char*) (final)+sizeof(BlockHeader);
   }
   
   return nullptr;
 }
 
 int BuddyAllocator::free(char* _a) {
-  BlockHeader* test = (BlockHeader *) (_a-1);
+  //Freeing char* _a
+  BlockHeader* test = (BlockHeader *) (_a-sizeof(BlockHeader));
+  test->free = true;
   cout << "Free: " << test->block_size << endl;
   int index = findindex(test->block_size);
   FreeList[index].insert(test);
   int i = 0;
   int k = log2(double(total_memory_size)/basic_block_size);
+
+
   while(i < k) {
     if(FreeList[i].head) {
       //cout << FreeList[i].head->block_size << endl;
       BlockHeader* headBlock = FreeList[i].head;
       BlockHeader* testBuddy = getbuddy(headBlock);
-      cout << "buddy size: " << testBuddy->block_size << endl;
-      BlockHeader* mergedBlock = merge(headBlock,testBuddy);
-      FreeList[i].remove(headBlock);
-      FreeList[i].remove(testBuddy);
-      //cout << mergedBlock->block_size << endl;
-      FreeList[i+1].insert(mergedBlock);
+      cout << testBuddy->block_size << endl;
+      if(testBuddy->free == true) {
+        BlockHeader* mergedBlock = merge(headBlock,testBuddy);
+        FreeList[i].remove(headBlock);
+        FreeList[i].remove(testBuddy);
+        //cout << mergedBlock->block_size << endl;
+        FreeList[i+1].insert(mergedBlock);
+      }
+      else {
+        i++;
+      }
     }
-    i++;
+    else {
+      i++;
+    }
     //cout << i << endl;
   }
   //cout << mergedBlock->block_size << endl;
@@ -125,10 +138,8 @@ int BuddyAllocator::findindex(int length) {
 
 BlockHeader* BuddyAllocator::getbuddy(BlockHeader * addr) {
   // given a block address, this function returns the address of its buddy
-  char* blockAddr = (char*) (addr)-1;
-  cout << "Original Block Size: " << (uintptr_t)(addr->block_size) << endl;
-  char* buddyAddress = (char*)((uintptr_t)(blockAddr-start) ^ (uintptr_t)(addr->block_size) + (uintptr_t)start);
-  cout << buddyAddress-start << endl;
+  char* blockAddr = (char*) (addr)-sizeof(BlockHeader);
+  char* buddyAddress = (char*)(((long)(blockAddr-start) ^ (long)(addr->block_size)) + start);
   BlockHeader* buddy = (BlockHeader*) (buddyAddress);
   return buddy;
 }
@@ -141,26 +152,30 @@ bool BuddyAllocator::arebuddies (BlockHeader* block1, BlockHeader* block2) {
 BlockHeader* BuddyAllocator::merge (BlockHeader* block1, BlockHeader* block2) {
   // this function merges the two blocks returns the beginning address of the merged block
   // note that either block1 can be to the left of block2, or the other way around
-  char* address1 = (char*) (block1)-1;
-  char* address2 = (char*) (block2)-1;
+  char* address1 = (char*) (block1)-sizeof(BlockHeader);
+  char* address2 = (char*) (block2)-sizeof(BlockHeader);
   BlockHeader* mergedB;
   if(address1-start < address2-start) {
     //Address1 is closer to starting address
-    mergedB = (BlockHeader *) address1;
+    block1->block_size = block1->block_size + block2->block_size;
+    block1->free = true;
+    return block1;
   }
-  else if(address2-start < address1-start) {
+  else {
     //Address2 is closer to starting address
-    mergedB = (BlockHeader *) address2;
+    block2->block_size = block2->block_size + block1->block_size;
+    block2->free = true;
+    return block2;
   }
-  mergedB->block_size = block1->block_size + block2->block_size;
-  return mergedB;
+
 }
 
 BlockHeader* BuddyAllocator::split (BlockHeader* block) {
   int newSize = block->block_size/2;
-  char* blockAddress = (char*) (block)+1;
+  char* blockAddress = (char*) (block)+sizeof(BlockHeader);
   char* newblockAddress = blockAddress + newSize;
   BlockHeader* newBlock = (BlockHeader *) newblockAddress;
+  newBlock->free = true;
   block->block_size = newSize;
   newBlock->block_size = newSize;
   return newBlock;
