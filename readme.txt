@@ -7,5 +7,3 @@ Here comes the source code for PA1. The following files are included:
 -- Main.cpp: This file calls the Ackerman::test() function to exercise your allocator. You will need to add initialization and clean-up of the allocator on exit.
 
 -- makefile : This file tells 'make' how to compile everything together.
-
-test change
